@@ -12,4 +12,9 @@ def Tests():
 
 if __name__=='__main__':
     #more tests will be added - need to collect them
+    # threads,
+    #different web getters (download mechanics),
+    #gFile (auto download file links
+    #Store to any db and datastructure.
+    # will be added step by step. with Clean websites =)
     print(Tests())
