@@ -13,7 +13,7 @@ class RegKey:
             SubKey=Key[Key.find('\\')+1:]
         except:
             Log('Can not read registry key %s'%Key)
-            print traceback.format_exc()
+            print(traceback.format_exc())
             #raise 'Can not read registry key %s'%Key
         self.hKey=_winreg.OpenKey(self.hRootKey,SubKey)
         

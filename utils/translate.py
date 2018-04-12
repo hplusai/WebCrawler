@@ -65,7 +65,7 @@ def AnalyzeXmlFiles(Path):
     ret={}
     fl=distutils.filelist.findall(Path)
     for fName in fl:
-        print fName
+        print(fName)
         d=GetXDocFromXml(AbsPath(fName))
         #Nodes+#Attributes
         for xN in (xNodes(d,'.//*')+xNodes(d,'.//@*')):
@@ -83,7 +83,7 @@ def AnalyzeXmlFiles(Path):
                         ret[xpath]={}
                     ret[xpath][cont]=None
             except:
-                print 'Error',xN.nodePath()
+                print('Error',xN.nodePath())
                 break
 #        break
     return ret
@@ -112,7 +112,7 @@ def CollectWordsFromXmlFiles(Path,XmlXPathList):
                     cont=NormStr(tNode.content.strip())
                     ret[cont]=xpath
             except:
-                print 'Error',xN.nodePath()
+                print('Error',xN.nodePath())
                 break
 #        break
     return ret
@@ -155,7 +155,7 @@ def UpdateWordsInMainXml():
             raise xN.content
         tEng=NormStr(fTextNode.content)
         s=tEng
-        print 'UpdateWordsInMainXml Trying ID=%s'%tId
+        print('UpdateWordsInMainXml Trying ID=%s'%tId)
         if tEng.startswith('<p '):
             try:
               doc=libxml2.parseDoc(s)
@@ -170,7 +170,7 @@ def UpdateWordsInMainXml():
 #           fText=GetHtmlText(tId,fontId,ToUtf(DeNormStr(fText)),fHeight,fColor,fAlign)
             fTextNode.setContent(ToUtf(DeNormStr(tEng.replace(s,fText))))
         else:
-            print 'Do not find ID=%s, Text="%s" '%(tId,s)
+            print('Do not find ID=%s, Text="%s" '%(tId,s))
 
 ##        xN.setProp('AutoSize','True') - IT IS CRASH THE GAME
 #        xN.setProp('HTML','True')
@@ -202,11 +202,11 @@ def UpdateWordsInXmlFiles(Path,XmlXPathList):
                     if tDict.has_key(cont):
                         xN.setContent(ToUtf(tDict[cont]))
                     else:
-                        print 'not found %s; xpath=%s'%(cont,xpath)
+                        print('not found %s; xpath=%s'%(cont,xpath))
 #            k=val.decode('cp1251')
 #                    ret[cont]=xpath
             except:
-                print 'Error',xN.nodePath()
+                print('Error',xN.nodePath())
                 break
         d.saveFileEnc(AbsPath(fName),'utf-8')
 #        break

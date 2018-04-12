@@ -39,8 +39,8 @@ def capital(v): return v and v[0].upper()+v[1:] or v
 class transliterator:
     @classmethod
     def dump( me):
-        print 'cyr2lat:', ' '.join( k+':'+v for k,v in me.cyr2lat.items() )
-        print 'lat2cyr:', ' '.join( k+':'+v for k,v in me.lat2cyr.items() )
+        print('cyr2lat:', ' '.join( k+':'+v for k,v in me.cyr2lat.items() ))
+        print('lat2cyr:', ' '.join( k+':'+v for k,v in me.lat2cyr.items() ))
     @classmethod
     def cyr2lat( me, x): return direct( me._cyr2lat, x)
     @classmethod

@@ -147,13 +147,13 @@ class SmartDict(object):
         return repr(_)
 
     def __get__( _, instance, owner):
-        print instance, owner
+        print(instance, owner)
 
     def __set__( _, instance, value):
-        print instance, owner
+        print(instance, owner)
 
     def __delete__( _, instance):
-        print instance, owner
+        print(instance, owner)
 
     def __delitem__( _, key):
         k = _.__get_key(key)
@@ -190,7 +190,7 @@ class SmartDict(object):
         test['Jkjasd']=123
         test['JkjAsd']=666
         if test.has_key('jkjAsd'):
-            print 'Ura'
+            print('Yeah')
 
 class SimpleObj():
     def __init__(_,*args,**kwargs):
@@ -266,12 +266,12 @@ class AttrDict(object):
         testObj=AttrDict({'id':5,'vals':{'aaa':3},'a2':[{'a':[0]},2,3]},b=134)
         testObj['b']=23
         testObj['c']=23
-        print testObj['b']
+        print(testObj['b'])
         if 'b' in testObj:
-            print 'b in dict'
+            print('b in dict')
         testObj=AttrDict(testObj)
         for k,v in testObj.items():
-            print k,v
+            print(k,v)
 ##exit(0)
 
 if __name__ == '__main__':

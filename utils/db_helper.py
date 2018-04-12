@@ -100,7 +100,7 @@ def genInsert(table,keys,listofvalues, OnMakeTabName=None, insStatement='insert'
         ins=sql+((keys and '('+makeInsStr(keys)+')') or '')
         ins=ins+' values '+vals[:-1]+';'
     except:
-        print 'genInsert-Error:',table,keys,listofvalues
+        print('genInsert-Error:',table,keys,listofvalues)
         app.LogError('',1)
     #for vals in listofvalues:
 #        vals
@@ -118,7 +118,7 @@ def genUpdate(table,IdKey,dKeyVal):
         sql+=makeUpdStr(dKeyVal,format)
         sql+=' where id=%s'%str(IdKey)
     except:
-        print 'genUpdate-Error:',table,IdKey,dKeyVal
+        print('genUpdate-Error:',table,IdKey,dKeyVal)
         app.LogError('',1)
     #for vals in listofvalues:
 #        vals

@@ -252,7 +252,7 @@ def RenFiles_DateName(Path):
     try:
       fl=GetFilesInfo(Path);
       for f,i in fl.items():
-          print f
+          print(f)
           ChangeFileName(f,i['CreateDt']+'.'+GetFileExt(f))
     except:
         None
