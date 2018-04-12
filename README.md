@@ -1,7 +1,7 @@
 WebCrawler
 
 Description 
---------------
+==============
 Module to parse information from htmls/xml/doc documents
 Commands to downloads presents dictionary with XPaths defs.
 Please take a look on tests.py module.
@@ -11,7 +11,7 @@ Everything changed since then:
 Utils modules set - basically pure functional style programming no OOP,
 but seems may be helpful for someone who wants to automate documents processing 
 (pretty fast processing in multithread mode and easy to set up rules for parsing)
---------------
+==============
 There is no GUI for now (in plans =) ). 
 Probably is best way (for GUI) to create chrome extension 
 -- similar to http://webscraper.io/, https://github.com/martinsbalodis/web-scraper-chrome-extension
