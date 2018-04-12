@@ -5,7 +5,10 @@ Description
 Module to parse information from htmls/xml/doc documents
 Commands to downloads presents dictionary with XPaths defs.
 Please take a look on tests.py module.
+==============
 
+Additional info
+==============
 It's pretty old version from ~ 2010. 
 Everything changed since then:
 Utils modules set - basically pure functional style programming no OOP,
