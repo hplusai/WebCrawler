@@ -3,7 +3,8 @@ import utils
 from utils import web_crawler
 
 def WikiTest():
-    url,pars=r'https://en.wikipedia.org/wiki/Freedom',['.//*[@id="firstHeading" and contains(.//text(),"Freedom")]','//*[@id="bodyContent"]']
+    url=r'https://en.wikipedia.org/wiki/Freedom'
+    pars=['.//*[@id="firstHeading" and contains(.//text(),"Freedom")]','//*[@id="bodyContent"]']
     print('LXml',web_crawler.ParseAndSaveXDoc(url,pars))
     print('Done : Web Crawler Test')
 
