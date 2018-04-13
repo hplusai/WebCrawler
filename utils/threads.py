@@ -1,21 +1,21 @@
 ##import win32api
-import thread,threading,time
-import utils.apputils
-from utils import apputils,fileutils
+import threading,time
+import utils.app
+from utils import app
 import traceback
 import sys, uuid, os
 ##rmutex = thread.allocate_lock() # for calls to random
 flOneThreadMode=0#(__debug__ and 1) or 0
 CleanUpFunc=None
 
-LogLocation=apputils.AbsPath('log')
+LogLocation=app.AbsPath('log')
 if not os.path.exists(LogLocation):
     os.mkdir(LogLocation)
 
 def SimpleLog(msg):
-    if utils.apputils.LogType==utils.apputils.flLogErrorsOnly:
+    if app.LogType==app.flLogErrorsOnly:
         return
-    fname=apputils.AbsPath('log\\'+str(uuid.uuid4())+'.txt')
+    fname=app.AbsPath('log\\'+str(uuid.uuid4())+'.txt')
     f=open(fname,'wb')
     f.write(msg)
     f.close()
@@ -27,7 +27,7 @@ class ThreadExcept:
 #    print 'Exception : ', str(self)
 #    SimpleLog(str(self))
     if flOneThreadMode:
-        apputils.Log(str(self))
+        app.Log(str(self))
 #        print 'Exception : ', str(self)
   def __str__(self):
     return str(self.error)+' '+str(self.exception)
@@ -51,11 +51,11 @@ def DoCleanUp():
         if CleanUpFunc:
             CleanUpFunc()
     except:
-        apputils.LogError('Threads CleanUpFunc error')
+        app.LogError('Threads CleanUpFunc error')
 
 
 class Threads:
-  def __init__(self, RepeatIfExcept=1, MaxThreadCount=256, flLog=apputils.LogType, flNoResult=0):  #, OnError=None):
+  def __init__(self, RepeatIfExcept=1, MaxThreadCount=256, flLog=app.LogType, flNoResult=0):  #, OnError=None):
     global loc
     self.MaxThreadCount=MaxThreadCount
     self.mutex = threading.Lock()
@@ -89,15 +89,15 @@ class Threads:
         rep+=1
         try:
           # log all tasks params
-          if self.flLog==apputils.flFullLog:
-            apputils.Log((';params;'+func.__name__+'('+str(args)+')').replace('\n','\\'),FullLogFileName)
+          if self.flLog==app.flFullLog:
+            app.Log((';params;'+func.__name__+'('+str(args)+')').replace('\n','\\'),FullLogFileName)
           fResult=func(*args,**kwargs)
           flDone=1
         except (KeyboardInterrupt, SystemExit):
           sys.exit(0)
         except:
           fResult=ThreadExcept()
-          apputils.LogError('Threads.__task'+str(func)+'\n'+str(args),str(kwargs))
+          app.LogError('Threads.__task'+str(func)+'\n'+str(args),str(kwargs))
 
         if self.flNoResult:
             fResult=None
@@ -113,13 +113,13 @@ class Threads:
       self.running -= 1
       try:
         # log all tasks
-        if self.flLog==apputils.flFullLog:
-          apputils.Log((';'+((isinstance(fResult,ThreadExcept) and 'error') or 'success')+';'+str(fResult)).replace('\n','\\'),FullLogFileName)
+        if self.flLog==app.flFullLog:
+          app.Log((';'+((isinstance(fResult,ThreadExcept) and 'error') or 'success')+';'+str(fResult)).replace('\n','\\'),FullLogFileName)
 
         # check for auto error log
         if self.flLog and isinstance(fResult,ThreadExcept):
           #log all Errors
-          apputils.Log(str(fResult.exception)+'\n'+fResult.error+'\nfunction params='+str(args)+str(kwargs))
+          app.Log(str(fResult.exception)+'\n'+fResult.error+'\nfunction params='+str(args)+str(kwargs))
           self.ReturnData[index]=None
         else:
           self.ReturnData[index]=fResult
@@ -165,7 +165,7 @@ class Threads:
             if flOneThreadMode:
                 self.__task(index,func, args, kwargs)
             else:
-                thread.start_new_thread(self.__task, (index,func, args, kwargs))
+                app.thread.start_new_thread(self.__task, (index,func, args, kwargs))
             break
         except:
 ##          if win32api.GetLastError()==8:# not enough memory
@@ -193,7 +193,7 @@ class Threads:
     self.done.acquire()
 
   @classmethod
-  def StartAndWait(cls,func,argslist,RepeatIfExcept=1, MaxThreadCount=256, flLog=apputils.LogType, flNoResult=0): #, OnError=None):flRemoveErrors=True
+  def StartAndWait(cls,func,argslist,RepeatIfExcept=1, MaxThreadCount=256, flLog=app.LogType, flNoResult=0): #, OnError=None):flRemoveErrors=True
     tList=Threads(RepeatIfExcept, MaxThreadCount, flLog,flNoResult) #, OnError)
     tList.NewThreads(func,argslist)
     tList.WaitThreads()

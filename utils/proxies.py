@@ -1,22 +1,11 @@
 # coding=utf-8
 import os, sys, time
-import app, fsys, SmartTypes,threads,web_crawler
+import utils
+from utils import web
+from utils.web import *
 import urllib, itertools
 from sys import exit
-import subprocess, re
-from urlparse import urljoin, urlparse
-import BeautifulSoup
-from BeautifulSoup import BeautifulSoup
 import random
-
-reProxy=re.compile(r'\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):(\d+)\b')
-#p1=r'([0-9]{3}[.][0-9]{3}[.][0-9]{3}[.][0-9]{3}[:][0-9]{5})'
-#p2=r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
-#print re.findall(p,s)
-#print re.findall(p1,s)
-#print re.findall(p2,s)
-#s=r'fdsa 210.10.20.20:123 asgfsadf'
-#print reProxy.findall(s)
 
 fProxiesThread=app.AllocLock()
 SearchProxyLock=app.AllocLock()
@@ -61,9 +50,6 @@ ProxiesUrls['goodproxies.txt']=defProcess
 #r'http://multiproxy.org/txt_all/proxy.txt':defProcess,
 #r'http://www.freeproxy.ru/download/lists/goodproxy.txt':RemoveFirstNum
 #}
-
-def IsUrl(Url):
-    return Url and (Url[1]<>':') and (Url.startswith(r'http://') or Url.startswith(r'https://') or (re.findall(r'\.\w\w($|[\\])',Url.strip()) or '?' in Url or Url.startswith('/'))) and 1
 
 def AddProxy2BlackList(proxy):
     global ProxyBlackList,ProxyGoodList,ReuseGoodProxyDict
@@ -169,24 +155,7 @@ def GetProxy():
 
         return ret
 
-def GetHtmlLinks(url, data, flOnlyCurWebSite=1):
-    soup = BeautifulSoup(data)
-    ret=[str(tag['href']) for tag in soup.findAll('a', href=True)]
-    pureRet=[]
-    WebSite=web_crawler.GetUrlWebSite(url).strip('http://').strip('/').strip(':')
-    for x in SmartTypes.UniqList(ret):
-        xWebSite=web_crawler.GetUrlWebSite(x).strip('http://').strip('/').strip(':')
-        nUrl=(not flOnlyCurWebSite or WebSite in x or xWebSite=='' or '') and IsProxyUrl(x)
-        if nUrl:
-            pureRet.append(web_crawler.DoNormUrl(nUrl))
-
-    return SmartTypes.UniqList(pureRet)
-
 ProxiesUrls=SmartTypes.SmartDict()
-
-def IsProxyUrl(url):
-    flNotProxyUrl=not url or not url.strip().strip('/') or 'javascript' in url or url.startswith('#') or url.endswith('.js') or url.endswith('.css') or 'google.com' in url
-    return (not flNotProxyUrl) and url.strip()
 
 def CheckProxies(pLst, NoThreads=1):
     ret=[]
@@ -195,7 +164,7 @@ def CheckProxies(pLst, NoThreads=1):
             try:
 #                d=web_crawler.GetUrlData('http://ya.ru',p)
 #                if 'http://yandex.ru/opensearch.xml' in d:
-                d=web_crawler.GetUrlData('http://market.yandex.ru',p)
+                d=RequestData('http://market.yandex.ru',proxy=p)
                 if '</html>' in d and 'search-input' in d:
                     ret.append(p)
             except:
@@ -205,7 +174,6 @@ def CheckProxies(pLst, NoThreads=1):
 def ProcessProxyUrl(url, parent_site='', deep=0, deep_external=0):
     global ProxiesUrls
     # Do not use proxies for search
-    web_crawler.local.ProxyFunc=None
     try:
         if not IsProxyUrl(url):
             return None
@@ -222,7 +190,7 @@ def ProcessProxyUrl(url, parent_site='', deep=0, deep_external=0):
         if not IsProxyUrl(url):
             return None
 
-        UrlWebSite=web_crawler.GetUrlWebSite(url)
+        UrlWebSite=GetUrlWebSite(url)
         if url.strip('/')==UrlWebSite.strip('/'):
             return None
 
@@ -241,10 +209,8 @@ def ProcessProxyUrl(url, parent_site='', deep=0, deep_external=0):
             else:
                 deep_external+=1
 
-        content=web_crawler.GetUrlData(url)
-
         try:
-            lstUrls=GetHtmlLinks(url, content)
+            content, lstUrls=GetUrlDataAndLinks(url)
             proxList=map(lambda p : p and ('.'.join(p[:4])+':'+p[4]) ,reProxy.findall(content))
         except:
             app.LogError(flRaise=1)

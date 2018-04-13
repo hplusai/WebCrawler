@@ -96,13 +96,13 @@ def xNodeContent(node):
 
 def xNodes(Node,xPath, CheckCount=0):
     ret=Node.xpath(xPath)
-    if (CheckCount>0) and (len(ret)<>CheckCount):
+    if (CheckCount>0) and (len(ret)!=CheckCount):
         raise BaseException('def xValues. Wrong matches count! CorrectCount=%s; Matches.Count=%s; XPath=%s'%(CheckCount, len(ret),xPath))
     return ret
 
 def xNode(Node,xPath, flRaise=1):
     ret=xNodes(Node,xPath,flRaise)
-    if len(ret)<>1:
+    if len(ret)!=1:
         return None
     return ret[0]
 

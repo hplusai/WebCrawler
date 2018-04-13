@@ -41,7 +41,7 @@ def confluenceFormatHtml(d,spaceKey,ps):
         if href and (SrcServ in href):
             href=href.replace(SrcServ,'/')
         hqid=an.get('hqid')
-        if (hqid is not None and hqid<>''):
+        if (hqid is not None and (hqid!='')):
             href=''
             lnk=''
             lnk=xValue(an)

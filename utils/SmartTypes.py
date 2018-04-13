@@ -3,7 +3,12 @@ import string
 import locale
 import itertools, operator
 from itertools import groupby
-from operator import itemgetter,isMappingType as is_dict
+from operator import itemgetter
+import collections
+from collections import Mapping
+is_dict=lambda obj : isinstance(obj,collections.Mapping)
+string_lower=lambda s : s.lower()
+#unicode=str
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -16,13 +21,13 @@ mySDExc=MySmartDictExcept('')
 
 class SmartDict(object):
     def __get_key(_,key):
-        return (isinstance(key,(str,unicode)) and ((flSmartDictUseHash and hash(_.__LowFunc(key))) or _.__LowFunc(key))) or key
+        return (isinstance(key,(str,)) and ((flSmartDictUseHash and hash(_.__LowFunc(key))) or _.__LowFunc(key))) or key
 
     def get_base_key(_,key):
         k = _.__get_key(key)
         return _.__dict[k][0]
-
-    def __init__(_,inData=None, CaseLowFunc=string.lower, flSortKeys=None):
+        
+    def __init__(_,inData=None, CaseLowFunc=string_lower, flSortKeys=None):
         """Constructor: takes conventional dictionary or (tuple or list in format [[key,value],[key1,value1]]
            as input (or nothing)"""
         if flSortKeys is None:
@@ -206,6 +211,7 @@ class SimpleObj():
 
 def UniqList(lst):
     #return [key for key,_ in groupby(sorted(lst))]
+    lst=list(lst)
     ret=SmartDict(zip(lst,[None]*len(lst)))
     return ret.keys()
 
@@ -224,7 +230,7 @@ class AttrDict(object):
             o.__dict__.update(vals.__class__([[k,_.__recursive(v)] for k,v in vals.items()]))
             return o
         elif isinstance(vals,(list,tuple)):
-            return vals.__class__(map(lambda x : _.__recursive(x),vals))
+            return vals.__class__(list(map(lambda x : _.__recursive(x),vals)))
         else:
             return vals
 

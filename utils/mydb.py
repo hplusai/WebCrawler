@@ -1,6 +1,6 @@
 # coding=utf-8
 import utils,os,sys, Queue,thread
-from utils import app,fileutils,SmartTypes
+from utils import app,fsys,SmartTypes
 import MySQLdb
 import utils.db_helper
 utils.db_helper.escape_func=MySQLdb.escape_string
@@ -31,7 +31,7 @@ ScriptLogFile=app.AbsPath('script.sql')
 
 if flScriptMode:
     # clear script.sql
-    #fileutils.Save2File()
+    #fsys.Save2File()
     app.Log('',ScriptLogFile,0,1)
 
 defEnc='utf8'
@@ -50,7 +50,7 @@ ALTER TABLE xld_70a39f9a537b4eba94bc291051027b3a ADD UNIQUE (sheet ,col,row, lb,
 
 #mySqlScriptPattern = re.compile(r'''((?:[^;"']|[^\]"[^"]*"|[^\]'[^']*')+)''',re.I | re.M |re.DOTALL)
 mySqlScriptPattern = re.compile(r'[;][ ]*$',re.IGNORECASE | re.MULTILINE)
-#script=fileutils.GetFileData(r'c:\1.txt')
+#script=fsys.GetFileData(r'c:\1.txt')
 #for a in mySqlScriptPattern.split(s):
 #    print a
 #exit(0)
@@ -100,7 +100,7 @@ def getdb(raise_err=1):
         if len(dbs[threadId])>1:
             err='ERROR: YOU HAVE FEW MYSQL CONNECTION for thread %d'%threadId
 
-    if err<>'':
+    if err!='':
         app.out(err)
         app.Log(err)
         if raise_err:
@@ -317,9 +317,9 @@ def _ExecSql(sql,flRaise=1, flAsDict=0, pars={},db=None, recursive=0):
                 sCmd=app.removeComments(sCmd,1)
                 sCmdStrip=sCmd.strip().strip(';')
                 sCmdStripLow=sCmdStrip.lower()
-                if sCmdStrip<>'START TRANSACTION':
+                if sCmdStrip!='START TRANSACTION':
                     app.Log(sCmdStrip)
-                if sCmdStrip and sCmd<>'':
+                if sCmdStrip and (sCmd!=''):
                     script=mySqlScriptPattern.split(sCmdStrip)#[1::2]
                     if len(script)>1:
                         flErrorProcessed=1
@@ -514,7 +514,7 @@ def CreateTable(TabName, fields, vals=None, flDropTab=0, flOnlyIns=0, flCreateIn
       if vals:
           if tmpLoadPrefix:
             fold=tmpLoadPrefix+'temp'
-            fileutils.CreateDirs(fold)
+            fsys.CreateDirs(fold)
             fold+='\\'
             fName=app.AbsPath(fold+'%s.tab'%TabName)
             app.Log('CreateTable '+fName)
@@ -526,8 +526,8 @@ def CreateTable(TabName, fields, vals=None, flDropTab=0, flOnlyIns=0, flCreateIn
 #                    else:
 #                        r[i]=r[i].replace('\n','\\n').replace(';','.')
 #            import csv
-            fileutils.Save2Csv_old(fName,vals,add_repl=lambda x: ((x is not None) and x.replace('\\','\\\\').replace('\n','\\n').replace(';','.')) or '')#,'$^','$\r\n^'#.replace('`','')
-#            fileutils.Save2Csv(fName,vals)#,'$^','$\r\n^'
+            fsys.Save2Csv_old(fName,vals,add_repl=lambda x: ((x is not None) and x.replace('\\','\\\\').replace('\n','\\n').replace(';','.')) or '')#,'$^','$\r\n^'#.replace('`','')
+#            fsys.Save2Csv(fName,vals)#,'$^','$\r\n^'
             #mysql wants / slashes
             fName=fName.replace('\\','/')
             # if we create table then we need always
@@ -536,7 +536,7 @@ def CreateTable(TabName, fields, vals=None, flDropTab=0, flOnlyIns=0, flCreateIn
             else:
                 insFields=map(lambda f : ((f in dAllCols) and f) or '@dummy',fields)
 
-            insFields=fileutils.lineSep(insFields,',')
+            insFields=fsys.lineSep(insFields,',')
             LoadSql="""
                 LOAD  DATA LOCAL INFILE  '%s'
                 IGNORE
@@ -556,11 +556,11 @@ def CreateTable(TabName, fields, vals=None, flDropTab=0, flOnlyIns=0, flCreateIn
 
       if flCreateIndexes and flDropTab:
         for x in fields:
-            if x.lower()<>'id':
+            if x.lower()!='id':
                 ret.append('ALTER TABLE %s ADD INDEX(%s)'%(TabName,x))
 
       if flExec:
-        fileutils.Save2File('new_script.sql',ret)
+        fsys.Save2File('new_script.sql',ret)
         ExecSql(ret,0)
 
       return ret
@@ -569,7 +569,7 @@ def CreateTable(TabName, fields, vals=None, flDropTab=0, flOnlyIns=0, flCreateIn
         raise
 
 def Csv2Table(TabName, fname, delim='autodetect', flFistLineFields=1, flDropTab=0, flExec=1):
-    l=fileutils.GetFileData(fname,1)
+    l=fsys.GetFileData(fname,1)
     if len(l)>0:
         l[0]=l[0].strip('\xef\xbb\xbf')
 
@@ -603,7 +603,7 @@ def Csv2Table(TabName, fname, delim='autodetect', flFistLineFields=1, flDropTab=
 def FixLibXmlXpath(s):
     ret=''
     for x in s.split('/'):
-        if x and x<>'.':
+        if x and (x!='.'):
             x='*[name()="%s"]'%x
         ret+='/'+x
     return ret[1:]
@@ -689,7 +689,7 @@ def CreateSprFromDict(TabName,data, tabPrefix='', flDropTable=0, fOnlyIns=0, flC
 ##    country=x.Name.split('\\')[-2]
 ##    res.append(sId+';'+country.lower()+';'+hName.lower()+';'+x.Name+'\n')
 ##
-##fileutils.Save2File(fname,res)
+##fsys.Save2File(fname,res)
 ##ExecSql(Csv2Table('buf_kh',fname),0)
 
 def IsTableExists(tName):
@@ -765,14 +765,14 @@ def MakeTranslitName(tName):
     if not tName:
         raise Exception('MakeTabName. Wrong table/column name : '+tName)
 
-#    fileutils.Save2File(r'c:\cur.txt','13')
+#    fsys.Save2File(r'c:\cur.txt','13')
     #.decode('utf-8').decode('utf-8').
     #import chardet
-#    fileutils.Save2File(app.AbsPath(r'cur.txt'),chardet.detect(tName))
+#    fsys.Save2File(app.AbsPath(r'cur.txt'),chardet.detect(tName))
     Name=app.cyr2lat(tName.strip(),lambda x : ((x.isalpha() or x.isalnum()) and x) or '_')#,autoReplace={"'","_"})
     s=Name.replace("'",'_')
 #    print tName,Name
-#    fileutils.Save2File(app.AbsPath(r'cur.txt'),'123')
+#    fsys.Save2File(app.AbsPath(r'cur.txt'),'123')
 
 #    s=reduce(lambda ret,s : ret.replace(s,'_'),list(' ,.!?/\\|`"\'~!@#$%^&*()=-+'),Name)
     #s=re.sub(re.compile("[]",re.DOTALL ) ,"" ,s) # remove all occurance streamed comments (/*COMMENT */) from string
@@ -909,7 +909,7 @@ def AlterFieldIndex(defs=defaultFieldDef):
 
 fillUniqId=0
 
-def FillRandomValues(count=31):#defs=None,lanf='rus'):
+def FillRandomValues(count=31):
 
     def MakeRandomRow(cols):
         global fillUniqId

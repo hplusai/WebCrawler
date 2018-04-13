@@ -1,14 +1,18 @@
 ###############################################################################
 # The communication module (communication.py)
 ###############################################################################
-import cPickle
+try:
+  import cPickle as pickle
+except:
+  import pickle
+
 import socket
 import struct
 #import utils
 #from utils import app
 
-marshall = cPickle.dumps
-unmarshall = cPickle.loads
+marshall = pickle.dumps
+unmarshall = pickle.loads
 flSimpleTransfer=1
 
 def send(channel, *args):
@@ -31,7 +35,7 @@ def receive(channel):
     size = channel.recv(size)
     try:
         size = socket.ntohl(struct.unpack("L", size)[0])
-    except struct.error, e:
+    except struct.error as e:
         return ''
 
     buf = ""

@@ -1,6 +1,6 @@
 # coding=utf-8
 import utils,os
-from utils import app,consts,fileutils
+from utils import app,consts,fsys
 import subprocess
 
 s="""
@@ -69,7 +69,7 @@ def Export(options=[],filename=''):
     dump_output=subprocess.check_output(params,startupinfo=startupinfo)
 #    p1 = subprocess.Popen(params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 #    dump_output = p1.communicate()[0]
-    fileutils.Save2File(filename,dump_output,'wb')
+    fsys.Save2File(filename,dump_output,'wb')
     #print dump_output
 
 def main():

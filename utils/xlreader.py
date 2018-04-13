@@ -2,10 +2,8 @@
 import xlrd
 import utils
 #from utils import CustomDlg
-from utils import app,fileutils
-from utils import SmartTypes
+from utils import app,fsys,SmartTypes,mydb
 #from utils.CustomDlg import *
-from utils import mydb
 mydb.tmpLoadPrefix='db_'
 from utils.mydb import *
 import difflib
@@ -32,7 +30,7 @@ def ExcelSheets2Db(inFname=None, tab_name='xld', UidOnVal=None):
     ex=[]
 
     if not inFname:
-        inFname=fileutils.OpendFileDlg('xls')
+        inFname=fsys.OpendFileDlg('xls')
         inFname=inFname[0]
         if not inFname:
           return 0

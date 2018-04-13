@@ -1,8 +1,9 @@
 # -*- coding: cp1251 -*-
 import utils
-from utils import fileutils, SmartTypes, apputils#, HtmlHelper
-from apputils import AbsPath
-from HtmlHelper import xNodes,xValues,GetXDocFromXml
+from utils import fsys, SmartTypes, app
+from utils.app import AbsPath
+from utils.fsys import GetFileData
+from web_crawler import xNodes,xValues,GetXDocFromXml
 import itertools
 from itertools import chain
 import distutils
@@ -24,7 +25,8 @@ def Arr2Line(arr,sep=';',addfun=None):
     return ret[:-1]
 
 def ToUtf(s):
-    return s.decode('cp1251').encode('utf8')
+    return s.encode('utf8')
+#    return s.decode('cp1251').encode('utf8')
 
 def NormStr(s):
     return s.replace('\r\n','^').replace('\r','^').replace('\n','^')
@@ -36,7 +38,7 @@ def CollectWordsFromTextFiles(Path):
     ret={}
     fl=distutils.filelist.findall(Path)
     for fName in fl:
-        text=fileutils.GetFileData(fName,Encoding='utf16')
+        text=GetFileData(fName,Encoding='utf16')
         # replace new line symbols
         text=NormStr(text.strip())
         if isEnglish(text):
@@ -119,7 +121,7 @@ def CollectWordsFromXmlFiles(Path,XmlXPathList):
 
 def GetTranslateDict(FileName=None):
     tDict={}
-    dData=fileutils.GetFileData(FileName or AbsPath(r'translate.csv'),1)
+    dData=GetFileData(FileName or AbsPath(r'translate.csv'),1)
     for x in dData:
         u=x.split(';')
         if len(u)==1:
