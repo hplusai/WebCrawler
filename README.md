@@ -22,6 +22,7 @@ This version must be rewritten, but i hope to make new one within TreeCat langua
 
 Installation. Dependencies.
 ==============
+pip install lxml cssselect chardet requests
 
 Abilities
 ==============
